@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Measuring struct
 type Measuring struct {
 	MeasuringID  string    `json:"-"`
 	Key          string    `json:"key"`
@@ -17,14 +18,17 @@ type Measuring struct {
 	Attachments  []string  `json:"attachments"`
 }
 
+// MarshalBinary marhaling Measuring struct
 func (m Measuring) MarshalBinary() ([]byte, error) {
 	return json.Marshal(m)
 }
 
+// UnmarshalBinary unmarhaling Measuring struct
 func (m *Measuring) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &m)
 }
 
+// NewMeasuring creates new Measuring
 func NewMeasuring(
 	key string,
 	value string,

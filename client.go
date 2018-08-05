@@ -11,19 +11,23 @@ import (
 	"time"
 )
 
+// Client for Phicus Measuring API
 type Client struct {
 	url     string
 	timeout *time.Duration
 }
 
+// NewHTTPClient Creates Client
 func NewHTTPClient(url string) *Client {
 	return &Client{url: url}
 }
 
+// SetTimeout http timeout
 func (c *Client) SetTimeout(timeout time.Duration) {
 	c.timeout = &timeout
 }
 
+// Send measuring to Phicus Measuring API
 func (c *Client) Send(measuring Measuring) error {
 	content, err := json.Marshal(measuring)
 	if err != nil {
@@ -48,9 +52,15 @@ func (c *Client) Send(measuring Measuring) error {
 	if resp.StatusCode == 200 {
 		return nil
 	}
-	return fmt.Errorf("Error, repsonse %d", resp.Status)
+	return fmt.Errorf("Error, repsonse %s", resp.Status)
 }
 
-func (c *Client) Attach(file *io.Reader) (string, error) {
+// Upload file to Phicus Measuring API
+func (c *Client) Upload(file *io.Reader) (string, error) {
+	panic(errors.New("Not implemented"))
+}
+
+// Attach uploaded file to exists measuring
+func (c *Client) Attach(uploadID, measuringID string) (string, error) {
 	panic(errors.New("Not implemented"))
 }
