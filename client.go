@@ -30,7 +30,7 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 // Send measuring to Phicus Measuring API
 func (c *Client) Send(measuring Measuring) (string, error) {
 	var response measuringResponse
-	if err := c.send(c.url+"/measurings", measuring, &response); err != nil {
+	if err := c.send(c.url, measuring, &response); err != nil {
 		return "", err
 	}
 	return response.MeasuringID, nil
@@ -42,7 +42,7 @@ func (c *Client) Upload(file io.Reader) (string, error) {
 	if err := c.send(c.url+"/files", file, &response); err != nil {
 		return "", err
 	}
-	return response.UploadID, nil
+	return response.FileID, nil
 }
 
 // UploadFile file to Phicus Measuring API
@@ -56,13 +56,13 @@ func (c *Client) UploadFile(filename string) (string, error) {
 }
 
 // Attach uploaded file to exists measuring
-func (c *Client) Attach(uploadID, measuringID string) error {
-	request := attachmentRequest{uploadID, measuringID}
+func (c *Client) Attach(fileID, measuringID string) error {
+	request := attachmentRequest{fileID, measuringID}
 	return c.send(c.url+"/attachments", request, nil)
 }
 
 type attachmentRequest struct {
-	UploadID    string `json:"upload_id"`
+	FileID      string `json:"file_id"`
 	MeasuringID string `json:"measuring_id"`
 }
 
@@ -71,7 +71,7 @@ type errorResponse struct {
 }
 
 type uploadResponse struct {
-	UploadID string `json:"upload_id"`
+	FileID string `json:"file_id"`
 }
 
 type measuringResponse struct {
