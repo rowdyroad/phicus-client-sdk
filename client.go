@@ -130,7 +130,6 @@ func (c *Client) send(url string, data interface{}, response interface{}) error 
 		if err := decoder.Decode(&result); err != nil {
 			return err
 		}
-		log.Println(result)
 		return errors.New(result.Error)
 	}
 	if response != nil {
