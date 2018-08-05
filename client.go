@@ -39,7 +39,7 @@ func (c *Client) Send(measuring Measuring) (string, error) {
 // Upload file to Phicus Measuring API
 func (c *Client) Upload(file io.Reader) (string, error) {
 	var response uploadResponse
-	if err := c.send(c.url+"/upload", file, &response); err != nil {
+	if err := c.send(c.url+"/files", file, &response); err != nil {
 		return "", err
 	}
 	return response.UploadID, nil
@@ -58,7 +58,7 @@ func (c *Client) UploadFile(filename string) (string, error) {
 // Attach uploaded file to exists measuring
 func (c *Client) Attach(uploadID, measuringID string) error {
 	request := attachmentRequest{uploadID, measuringID}
-	return c.send(c.url+"/upload", request, nil)
+	return c.send(c.url+"/attachments", request, nil)
 }
 
 type attachmentRequest struct {
