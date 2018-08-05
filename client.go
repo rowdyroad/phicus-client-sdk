@@ -32,7 +32,7 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 }
 
 // Send measuring to Phicus Measuring API
-func (c *Client) Send(measuring Measuring) (string, error) {
+func (c *Client) Send(measuring *Measuring) (string, error) {
 	var response measuringResponse
 	if err := c.send(fmt.Sprintf("%s?timestamp=%d", c.url, time.Now().UnixNano()), measuring, &response); err != nil {
 		return "", err

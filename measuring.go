@@ -2,7 +2,6 @@ package phicus
 
 import (
 	"encoding/json"
-	"errors"
 	"time"
 )
 
@@ -35,10 +34,7 @@ func NewMeasuring(
 	lat *float64,
 	lng *float64,
 	display *string,
-	attachments []string) (*Measuring, error) {
-	if key == "" {
-		return nil, errors.New("Not valid measuring: key is undefined")
-	}
+	attachments []string) *Measuring {
 	return &Measuring{
 		Key:          key,
 		Value:        value,
@@ -47,5 +43,5 @@ func NewMeasuring(
 		Display:      display,
 		FixationTime: time.Now().UnixNano(),
 		Attachments:  attachments,
-	}, nil
+	}
 }

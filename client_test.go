@@ -9,8 +9,7 @@ import (
 func TestMain(t *testing.T) {
 	log.SetFlags(log.Lshortfile)
 	c := NewHTTPClient("http://localhost:10080/api/measurings")
-	measuring, _ := NewMeasuring("test", "test", nil, nil, nil, nil)
-	measuringID, err := c.Send(*measuring)
+	measuringID, err := c.Send(NewMeasuring("test", "test", nil, nil, nil, nil))
 	if err != nil {
 		t.Fatal(err)
 	}
