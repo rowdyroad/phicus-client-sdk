@@ -8,14 +8,14 @@ import (
 
 // Measuring struct
 type Measuring struct {
-	MeasuringID  string    `json:"-"`
-	Key          string    `json:"key"`
-	Value        string    `json:"value"`
-	Lat          *float64  `json:"lat"`
-	Lng          *float64  `json:"lng"`
-	Display      *string   `json:"display"`
-	FixationTime time.Time `json:"time"`
-	Attachments  []string  `json:"attachments"`
+	MeasuringID  string   `json:"-"`
+	Key          string   `json:"key"`
+	Value        string   `json:"value"`
+	Lat          *float64 `json:"lat"`
+	Lng          *float64 `json:"lng"`
+	Display      *string  `json:"display"`
+	FixationTime int64    `json:"time"`
+	Attachments  []string `json:"attachments"`
 }
 
 // MarshalBinary marhaling Measuring struct
@@ -45,7 +45,7 @@ func NewMeasuring(
 		Lat:          lat,
 		Lng:          lng,
 		Display:      display,
-		FixationTime: time.Now(),
+		FixationTime: time.Now().UnixNano(),
 		Attachments:  attachments,
 	}, nil
 }

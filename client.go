@@ -4,11 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Client for Phicus Measuring API
@@ -30,7 +34,7 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 // Send measuring to Phicus Measuring API
 func (c *Client) Send(measuring Measuring) (string, error) {
 	var response measuringResponse
-	if err := c.send(c.url, measuring, &response); err != nil {
+	if err := c.send(fmt.Sprintf("%s?timestamp=%d", c.url, time.Now().UnixNano()), measuring, &response); err != nil {
 		return "", err
 	}
 	return response.MeasuringID, nil
@@ -56,18 +60,19 @@ func (c *Client) UploadFile(filename string) (string, error) {
 }
 
 // Attach uploaded file to exists measuring
-func (c *Client) Attach(fileID, measuringID string) error {
-	request := attachmentRequest{fileID, measuringID}
+func (c *Client) Attach(measuringID, fileID string) error {
+	request := attachmentRequest{measuringID, fileID}
 	return c.send(c.url+"/attachments", request, nil)
 }
 
 type attachmentRequest struct {
-	FileID      string `json:"file_id"`
 	MeasuringID string `json:"measuring_id"`
+	FileID      string `json:"file_id"`
 }
 
 type errorResponse struct {
-	Error string `json:"error"`
+	Error  string            `json:"error"`
+	Fields map[string]string `json:"fields"`
 }
 
 type uploadResponse struct {
@@ -82,8 +87,20 @@ func (c *Client) send(url string, data interface{}, response interface{}) error 
 	var req *http.Request
 	var err error
 	if reader, ok := data.(io.Reader); ok {
-		req, err = http.NewRequest("POST", url, reader)
-		req.Header.Set("Content-Type", "application/octet-stream")
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+		part, err := writer.CreateFormFile("file", uuid.New().String())
+		if err != nil {
+			return err
+		}
+		if _, err := io.Copy(part, reader); err != nil {
+			return err
+		}
+		if err := writer.Close(); err != nil {
+			return err
+		}
+		req, err = http.NewRequest("POST", url, body)
+		req.Header.Set("Content-Type", writer.FormDataContentType())
 	} else {
 		content, jsonErr := json.Marshal(data)
 		if jsonErr != nil {
@@ -110,14 +127,15 @@ func (c *Client) send(url string, data interface{}, response interface{}) error 
 	if resp.StatusCode != 201 {
 		decoder := json.NewDecoder(resp.Body)
 		var result errorResponse
-		if err := decoder.Decode(result); err != nil {
+		if err := decoder.Decode(&result); err != nil {
 			return err
 		}
+		log.Println(result)
 		return errors.New(result.Error)
 	}
 	if response != nil {
 		decoder := json.NewDecoder(resp.Body)
-		return decoder.Decode(response)
+		return decoder.Decode(&response)
 	}
 	return nil
 }
