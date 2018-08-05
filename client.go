@@ -24,7 +24,7 @@ func (c *Client) SetTimeout(timeout time.Duration) {
 	c.timeout = &timeout
 }
 
-func (c *Client) Send(measuring *Measuring) error {
+func (c *Client) Send(measuring Measuring) error {
 	content, err := json.Marshal(measuring)
 	if err != nil {
 		return err
@@ -53,5 +53,4 @@ func (c *Client) Send(measuring *Measuring) error {
 
 func (c *Client) Attach(file *io.Reader) (string, error) {
 	panic(errors.New("Not implemented"))
-	return "", nil
 }
