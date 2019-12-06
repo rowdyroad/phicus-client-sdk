@@ -1,2 +1,4 @@
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/rowdyroad/phicus-client-sdk/v2 v2.0.0-20191206012142-943aaa56075b h1:8m5y4AQ6bwFLvdMpAjQKmpQ8LGDteE6y7LKKQqgabuQ=
+github.com/rowdyroad/phicus-client-sdk/v2 v2.0.0-20191206012142-943aaa56075b/go.mod h1:e0tdnc+IGAPJ2VLvZTsViALhzy6HhDxpO32uFxOegoQ=

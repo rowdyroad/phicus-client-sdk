@@ -3,7 +3,7 @@ package phicus
 import (
 	"testing"
 
-	"github.com/influxdb/pkg/testing/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSimple(t *testing.T) {

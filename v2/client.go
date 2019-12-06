@@ -15,22 +15,27 @@ import (
 	"github.com/google/uuid"
 )
 
+
+type Options struct {
+	timeout time.Duration
+}
+
 // Client for Phicus Measuring API
 type Client struct {
 	url      string
-	timeout  *time.Duration
+	options *Options
 	timediff time.Duration
 }
 
 // NewClient Creates Client
-func NewClient(url string, timeout *time.Duration) *Client {
+func NewClient(url string, ops *Options) *Client {
 	var timediff time.Duration
 	if resp, err := http.Head(url); err == nil {
 		if t, err := time.Parse(time.RFC3339Nano, resp.Header.Get("x-time")); err == nil {
 			timediff = time.Now().Sub(t)
 		}
 	}
-	return &Client{url: url, timediff: timediff, timeout: timeout}
+	return &Client{url: url, timediff: timediff, options: ops}
 }
 
 func (c *Client) Send(key, value string) (string, error) {
@@ -134,8 +139,8 @@ func (c *Client) send(method string, url string, data interface{}, response inte
 	}
 
 	client := &http.Client{}
-	if c.timeout != nil {
-		client.Timeout = *c.timeout
+	if c.options != nil && c.options.timeout > 0 {
+		client.Timeout = c.options.timeout
 	}
 	resp, err := client.Do(req)
 	if err != nil {
